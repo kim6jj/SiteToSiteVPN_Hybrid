@@ -48,5 +48,13 @@ Implementing a Dynamic BGP based, HA Site-to-Site VPN using Adrian Cantril's lab
     - First tunnel, outside, is an IPSec encrypted tunnel running over the Public internet with a preshared key (outside IPs) 
     - Inside tunnels, using inside IPs - BGP runs over the inside and data transfer
 
-- 
+- Moving to the OnPrem Routers (EC2 instances - repeat for each OnPrem Router)
+    - We will enter session manager via AWS and go into root permissions (sudo bash) for R1 instance
+    - Change directory into demo_assests (cd /home/ubuntu/demo_assets)
+    - should see ipsec.conf file (configuration of IPSec tunnels), ipsec.secrets (authentication information to authenticate with AWS) and ipsec-vti.sh (script file, enable/disable ipsec tunnels whenever system detects traffic) - *Files have been created beforehand with placeholder values
+    - will update values and restart instances (R1 and R2) to bring tunnel up after editing above files
+    - update 'ipsec.conf' file; placeholder values needing values are derived from earlier: R1 Private IP, OnPrem Outside IP, AWS Outside IP, etc
+    - update 'ipsec.secrets' file
+        - sss
+     
     
