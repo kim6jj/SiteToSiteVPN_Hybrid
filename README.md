@@ -26,5 +26,17 @@ Implementing a Dynamic BGP based, HA Site-to-Site VPN using Adrian Cantril's lab
             Description: Public IP of Router2<br/>
             Value: !GetAtt Router2.PublicIp<br/>
     
+- Create OnPrem Router 1 and 2 using IPs that were output after stack creation, dynamic routing, and using a private BGP ASN of 65016 (can use any within range but demo is configured to use 65016)
+
+# Stage 2 (AWS Side VPN Architecture)
+- 2 VPN attachments for TGW using accelerated VPN endpoints (2x per connection) - transit back to AWS side gateway over AWS global network as well as creating VPN connections using IPSec tunnels to the ONPrem Router 1+2
+- Create Transit Gateway Attachements (under VPC) For each OnPrem Router
+    - using already existing A4L TGW from CloudFormation stack
+    - attachment type = VPN (One side connecting to AWS and other connecting to the Customer GW we created before in Stage 1) - Dynamic routing option and enable acceleration
+    - Should see these pending under 'Site-to-Site VPN Connections' section
+    - Download the configuration file for each connection/ID (For use in Stage 3)
+
+# Stage 3
 - 
+  
     
