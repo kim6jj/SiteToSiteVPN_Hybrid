@@ -71,7 +71,7 @@ Implementing a Dynamic BGP based, HA Site-to-Site VPN using Adrian Cantril's lab
 - Now configure BGP to run over the top of the 4 IPSec tunnels we have created
 - Go into root/bash again for EC2 instances of OnPrem Router 1 then Router 2, in /home/ubuntu/demo_assets/ there will be a script file 'ffrouting-install.sh'
     - make it executable (chmod +x ffrouting-install.sh) and execute (./ffrouting-install.sh) while in directory
-- Up to this point, the AWS side (10.16.0.0/16) and OnPrem 192.168.10.0 - 192.168.11.0/24 are still segmented and have no awareness of one another
+- Up to this point, the AWS side (10.16.0.0/16) and OnPrem 192.168.10.0 - 192.168.12.0/24 are still segmented and have no awareness of one another
 
 - Connect back into OnPrem R1 via session manager
     - In order to configure BGP, we need to go into the shell of FFRouting by typing in the command 'vtysh'
@@ -88,7 +88,12 @@ Implementing a Dynamic BGP based, HA Site-to-Site VPN using Adrian Cantril's lab
     - 'exit'
     - 'wr'                                                        - write/save to memory the configuration
     - 'exit' to exit shell then 'sudo reboot' to reboot the instance/OnPrem Router 1
+ 
+ - verify by going back to AWS console, should see both tunnels UP with BGP routes being advertised
+    - under Transit Gateway Route Tables, there should be routes dynamically learned via OnPrem Routers to the Transit gateway via BGP through the VPN connections
+    - can log back into the onPrem routers and issue a 'route' command or get more in detail by logging back into FFrouting via 'vtysh' and issuing a 'show ip route' should show BGP learned routes via its vti1 and 2 tunnel (HA and redundancy)
 
+- Should now be able to log into either side AWS or OnPrem instances created from the CloudFormation Stack and be able to ping and have reachability to either side.
 
      
     
