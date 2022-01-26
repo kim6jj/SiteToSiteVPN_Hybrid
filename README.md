@@ -36,7 +36,17 @@ Implementing a Dynamic BGP based, HA Site-to-Site VPN using Adrian Cantril's lab
     - Should see these pending under 'Site-to-Site VPN Connections' section
     - Download the configuration file for each connection/ID (For use in Stage 3)
 
-# Stage 3
+# Stage 3 (Establish IPSec tunnels by configuring OnPrem side)
+- To extract Tunnel information from Stage 2
+- We need the following information:
+    - Router1+2 Private IP - found in OnPrem stack output, OnPrem BGP ASN and AWS BGP ASN (64512, 65016)
+    - Connection 1 which is AWS side to On Prem R1 
+    - PresharedKey, OnPrem Outside + Inside IP, AWS Outside + Inside IP, AWS BGP IP - 'Tunnel Interface Connection' - FOR BOTH TUNNELS 1 + 2
+    - Connection 2 which is AWS side to On Prem R2
+    - PresharedKey, OnPrem Outside + Inside IP, AWS Outside + Inside IP, AWS BGP IP - 'Tunnel Interface Connection' - FOR BOTH TUNNELS 1 + 2
+- AWS Site-to-Site VPN has two tunnels per connection for resiliency 
+    - First tunnel, outside, is an IPSec encrypted tunnel running over the Public internet with a preshared key (outside IPs) 
+    - Inside tunnels, using inside IPs - BGP runs over the inside and data transfer
+
 - 
-  
     
