@@ -54,7 +54,41 @@ Implementing a Dynamic BGP based, HA Site-to-Site VPN using Adrian Cantril's lab
     - should see ipsec.conf file (configuration of IPSec tunnels), ipsec.secrets (authentication information to authenticate with AWS) and ipsec-vti.sh (script file, enable/disable ipsec tunnels whenever system detects traffic) - *Files have been created beforehand with placeholder values
     - will update values and restart instances (R1 and R2) to bring tunnel up after editing above files
     - update 'ipsec.conf' file; placeholder values needing values are derived from earlier: R1 Private IP, OnPrem Outside IP, AWS Outside IP, etc
-    - update 'ipsec.secrets' file
-        - sss
+    - update 'ipsec.secrets' file (Remember two tunnels per VPN connection on AWS side)
+        - Connection1_Tunnel1_OutsideIP Connection1_Tunnel1_AWS_OutsideIP : PSK "Preshared Key Tunnel 1" 
+        - Connection1_Tunnel2_OutsideIP Connection1_Tunnel2_AWS_OutsideIP : PSK "Preshared Key Tunnel 2" 
+    - update script ipsec-vti.sh - for each AWS-VPC-GW, configure appropriate IPs WITH subnet mask CIDR (ex. x.x.x.x/30)
+        - VTI_Localaddr = Onprem Inside IP for Tunnel 1 + 2
+        - VTI_Remoteaddr == AWS Inside IP for Tunnel 1 + 2
+
+- After filling the information in, we will copy the IPsec files over to the /etc directory where it'll be read by the StrongSwan software (cp ipsec* /etc)
+- Make the .sh script file executable (chmod +x /etc/ipsec-vti.sh) and restart strongswan software (systemctl restart strongswan)
+    - To verify, can run an 'ifconfig' and see if we have vti1 and vti2 showing which would indiciate that the tunnel interfaces are up and active to AWS
+- Repeat for OnPrem Router 2 (R2)
+    - Tunnel will show down in the AWS console as we don't have BGP connectivity yet but the IPSEC tunnel should show as UP
+
+# Stage 4 (Establish BGP sessions across IPSec tunnels and confirm IP connectivity between Simulate OnPrem and AWS side)
+- Now configure BGP to run over the top of the 4 IPSec tunnels we have created
+- Go into root/bash again for EC2 instances of OnPrem Router 1 then Router 2, in /home/ubuntu/demo_assets/ there will be a script file 'ffrouting-install.sh'
+    - make it executable (chmod +x ffrouting-install.sh) and execute (./ffrouting-install.sh) while in directory
+- Up to this point, the AWS side (10.16.0.0/16) and OnPrem 192.168.10.0 - 192.168.11.0/24 are still segmented and have no awareness of one another
+
+- Connect back into OnPrem R1 via session manager
+    - In order to configure BGP, we need to go into the shell of FFRouting by typing in the command 'vtysh'
+    - 'conf t'                                                    - go into configuration mode
+    - 'frr defaults traditional'                                  - reflects default profile adhering to IETF standards
+    - 'router bgp 65016'                                          - customer side BGP ASN from earlier
+    - 'neighbor <connection1_tunnel1_aws_bgp_ip> remote-as 64512' - configure relationship between onprem asn and aws asn used by transit gateway
+    - 'neighbor <connection1_tunnel2_aws_bgp_ip> remote-as 64512' - configure same for second tunnel which uses different AWS endpoint **For HA**
+    - 'no bgp ebgp-requires-policy'                               - turns off requirement of incoming/outgoing filters applied to eBGP sessions (RFC8212); disable to make our isntance of BGP work with AWS
+    - 'address-family ipv4 unicast'                               - 
+    - 'redistribute connected'                                    - redistribute any networks it is aware of
+    - 'exit-address-family'
+    - 'exit'
+    - 'exit'
+    - 'wr'                                                        - write/save to memory the configuration
+    - 'exit' to exit shell then 'sudo reboot' to reboot the instance/OnPrem Router 1
+
+
      
     
