@@ -29,6 +29,8 @@ Implementing a Dynamic BGP based, HA Site-to-Site VPN using Adrian Cantril's lab
     
 - Create OnPrem Router 1 and 2 using IPs that were output after stack creation, dynamic routing, and using a private BGP ASN of 65016 (can use any within range but demo is configured to use 65016)
 
+![stage1](https://github.com/kim6jj/SiteToSiteVPN_Hybrid/blob/7558aeab98133816356664dd7956a7a4108c2ab8/stage1.JPG)
+
 # Stage 2 (AWS Side VPN Architecture)
 - 2 VPN attachments for TGW using accelerated VPN endpoints (2x per connection) - transit back to AWS side gateway over AWS global network as well as creating VPN connections using IPSec tunnels to the ONPrem Router 1+2
 - Create Transit Gateway Attachements (under VPC) For each OnPrem Router
