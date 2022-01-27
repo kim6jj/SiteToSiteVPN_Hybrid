@@ -70,6 +70,8 @@ Implementing a Dynamic BGP based, HA Site-to-Site VPN using Adrian Cantril's lab
 - Repeat for OnPrem Router 2 (R2)
     - Tunnel will show down in the AWS console as we don't have BGP connectivity yet but the IPSEC tunnel should show as UP
 
+![stage3](https://github.com/kim6jj/SiteToSiteVPN_Hybrid/blob/31056459838affce76bdc73d57703cf4f21e19ca/Stage3.JPG)
+
 # Stage 4 (Establish BGP sessions across IPSec tunnels and confirm IP connectivity between Simulate OnPrem and AWS side)
 - Now configure BGP to run over the top of the 4 IPSec tunnels we have created
 - Go into root/bash again for EC2 instances of OnPrem Router 1 then Router 2, in /home/ubuntu/demo_assets/ there will be a script file 'ffrouting-install.sh'
